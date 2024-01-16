@@ -1,5 +1,5 @@
 <?php
-// Connexion à la base de données SQLite
+
 require "bd.php";
 try {
     $bdd = new PDO('sqlite:ma_base_de_donnees.db');
@@ -7,48 +7,47 @@ try {
 } catch (Exception $e) {
     die('Erreur : ' . $e->getMessage());
 }
+if ($_GET){
+    $quiz = $_GET['quiz'];
+    $id_quizz = $_GET['id_quizz'];
+    $queryCheckQuizz = $bdd->prepare("SELECT COUNT(*) AS count FROM Quizz WHERE id_quizz = ?");
+    $queryCheckQuizz->execute([$id_quizz]);
+    $result = $queryCheckQuizz->fetch(PDO::FETCH_ASSOC);
 
-// Vérifier si le formulaire a été soumis
+    if ($result['count'] == 0) {
+        // L'ID de quiz n'existe pas, procéder à l'insertion
+        $stmt = $bdd->prepare("INSERT INTO Quizz (id_quizz, nom) VALUES (?, ?)");
+        $stmt->execute([$id_quizz, $quiz]);
+    }
+
+}
 if ($_POST) {
-    // Récupérer la question et les réponses du formulaire
     $question = $_POST['question'];
     $reponses = $_POST['reponses'];
     $types = $_POST['types'];
     $est_correct = $_POST['est_correct'];
 
 
-    // Insérer la question dans la base de données
-    $idQuestion = getMaxIDQuestion(2, $bdd);
-    $stmt = $bdd->prepare("INSERT INTO Question (id_quizz,id_question, id_type, libelle_question) VALUES (2,".$idQuestion.", ?, ?)");
+    $idQuestion = getMaxIDQuestion($id_quizz, $bdd);
+    $stmt = $bdd->prepare("INSERT INTO Question (id_quizz,id_question, id_type, libelle_question) VALUES ($id_quizz,".$idQuestion.", ?, ?)");
     $stmt->execute([$types,$question]);
 
-    $idReponse = getMaxIDReponse(2, $idQuestion, $bdd);
+    $idReponse = getMaxIDReponse($id_quizz, $idQuestion, $bdd);
     foreach (explode(',', $reponses) as $reponse) {
-        $stmtR = $bdd->prepare("INSERT INTO Reponse (id_question, id_quizz, id_reponse, libelle_reponse, est_correct) VALUES (?, 2, ?, ?, 0)");
-        $stmtR->execute([$idQuestion, $idReponse, $reponse]);
+         $bdd->exec("INSERT INTO Reponse (id_question, id_reponse,id_quizz,  libelle_reponse, est_correct) VALUES ($idQuestion,$idReponse, $id_quizz,$reponse, 0)");
         $idReponse++;
     }
 
-    $idReponse = getMaxIDReponse(2, $idQuestion, $bdd);
     foreach (explode(',', $est_correct) as $est_correctR) {
-        $stmtR = $bdd->prepare("INSERT INTO Reponse (id_question, id_quizz, id_reponse, libelle_reponse, est_correct) VALUES (?, 2, ?, ?, 1)");
-        $stmtR->execute([$idQuestion, $idReponse, $est_correctR]);
+        $stmtRR = $bdd->prepare("INSERT INTO Reponse (id_question, id_quizz, id_reponse, libelle_reponse, est_correct) VALUES (?, $id_quizz, ?, ?, 1)");
+        $stmtRR->execute([$idQuestion, $idReponse, $est_correctR]);
         $idReponse++;
     }
 
 
     
 }
-
-// Vérifier si la table 'questions' existe
-$table_exists = $bdd->query('SELECT 1 FROM question LIMIT 1');
-
-if ($table_exists === false) {
-    die('La table "question" n\'existe pas. Assurez-vous d\'avoir exécuté le script create_db.php.');
-}
-
-// Récupérer toutes les questions de la base de données
-$requete = $bdd->query('SELECT * FROM question') or die(print_r($bdd->errorInfo(), true));
+$requete = $bdd->query('SELECT * FROM question WHERE id_quizz = ' .$id_quizz) or die(print_r($bdd->errorInfo(), true));
 $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -61,9 +60,8 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
 
-    <h1>Questions et Réponses</h1>
+    <h1><?php echo $quiz ?></h1>
 
-    <!-- Formulaire d'ajout de question -->
     <form method="post" action="">
 
 
@@ -72,17 +70,19 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
                 <label for="question">Question :</label>
                 <input type="text" name="question" required>
             </li>
-            <li>
+ 
+                <li>
                 <label for="reponses">Mauvaise réponses (séparées par des virgules) :</label>
                 <input type="text" name="reponses" required>
-            </li>
+                </li>
+
             <li>
                 <label for="est_correct">Bonne réponses (séparées par des virgules) :</label>
                 <input type="text" name="est_correct" required>
             </li>
             <li>
                 <label for="types">Type de question :</label>
-                <select type="select" name="types" required>
+                <select type="select" name="types" required onchange="toggleReponsesField()">
                     <option value="1">QCM</option>
                     <option value="2">Texte</option>
                     <option value="3">Chiffre</option>
@@ -93,14 +93,13 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
         <button type="submit">Ajouter la question</button>
     </form>
 
-    <!-- Affichage des questions et réponses -->
     <h2>Liste des Questions</h2>
     <ul>
         <?php 
         foreach ($questions as $q) : 
             echo "<li>";
                 echo "<h2>". htmlspecialchars($q['libelle_question']). "</h2>" ;
-                $rep = $bdd->query('SELECT * FROM reponse WHERE id_question =' . $q["id_question"]);
+                $rep = $bdd->query('SELECT * FROM Reponse WHERE id_question =' . $q["id_question"] .' and id_quizz =' .$id_quizz);
                 echo "<ul>";
                     foreach ($rep as $r) : 
                         echo "<li>";
@@ -119,3 +118,15 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 </body>
 </html>
+<script>
+    function toggleReponsesField() {
+        var selectedType = document.getElementById('types').value;
+        var reponsesField = document.getElementById('reponses');
+
+        if (selectedType == 1) {
+            reponsesField.disabled = false;
+        } else {
+            reponsesField.disabled = true;
+        }
+    }
+</script>
