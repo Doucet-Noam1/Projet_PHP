@@ -44,17 +44,29 @@ $bdd->exec('CREATE TABLE IF NOT EXISTS Reponse (
 
  // Ajout d'un quizz
  $bdd->exec("INSERT INTO Quizz (nom) VALUES ('Quiz PHP')");
+ $bdd->exec("INSERT INTO Quizz (nom) VALUES ('Quizz sur les dieux')");
 
  // Ajout de types de questions
+ $bdd->exec("INSERT INTO TypeQuestion (libelle_type) VALUES ('Number')");
+ $bdd->exec("INSERT INTO TypeQuestion (libelle_type) VALUES ('Texte')");
+ $bdd->exec("INSERT INTO TypeQuestion (libelle_type) VALUES ('Radio')");
  $bdd->exec("INSERT INTO TypeQuestion (libelle_type) VALUES ('Vrai/Faux')");
  $bdd->exec("INSERT INTO TypeQuestion (libelle_type) VALUES ('Nombre')");
 
  // Ajout d'une question liée à un quizz
  $bdd->exec("INSERT INTO Question (id_quizz, id_type,id_question, libelle_question) VALUES (1, 1,1, 'Le PHP est un langage de programmation')");
+ $bdd->exec("INSERT INTO Question (id_quizz, id_type,id_question, libelle_question) VALUES (2, 1,2, 'Combien de soeurs a Meduse?')");
+ $bdd->exec("INSERT INTO Question (id_quizz, id_type,id_question, libelle_question) VALUES (2, 2,3, 'Qui est la déesse de la vengeance?')");
+ $bdd->exec("INSERT INTO Question (id_quizz, id_type,id_question, libelle_question) VALUES (2, 3,4, 'Que porte Atlas sur ses épaules?')");
 
  // Ajout de réponses associées à la question
  $bdd->exec("INSERT INTO Reponse (id_question, id_reponse, libelle_reponse, est_correct) VALUES (1, 1, 'Vrai', 1)");
  $bdd->exec("INSERT INTO Reponse (id_question, id_reponse, libelle_reponse, est_correct) VALUES (1, 2, 'Faux', 0)");
+ $bdd->exec("INSERT INTO Reponse (id_question, id_reponse, libelle_reponse, est_correct) VALUES (2, 3, '2', 1)");
+ $bdd->exec("INSERT INTO Reponse (id_question, id_reponse, libelle_reponse, est_correct) VALUES (3, 4, 'Nemesis', 1)");
+ $bdd->exec("INSERT INTO Reponse (id_question, id_reponse, libelle_reponse, est_correct) VALUES (4, 5, 'Noam', 0)");
+ $bdd->exec("INSERT INTO Reponse (id_question, id_reponse, libelle_reponse, est_correct) VALUES (4, 6, 'Le_monde', 1)");
+ $bdd->exec("INSERT INTO Reponse (id_question, id_reponse, libelle_reponse, est_correct) VALUES (4, 7, 'Christelle Fernier', 0)");
 
  echo "Données insérées avec succès.";
 // Récupération des données du Quizz
