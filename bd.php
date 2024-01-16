@@ -1,4 +1,6 @@
 <?php
+
+function loadBD() {
 try {
     // Suppression de la base de données existante
     if (file_exists('ma_base_de_donnees.db')) {
@@ -50,28 +52,32 @@ $bdd->exec('CREATE TABLE IF NOT EXISTS Reponse (
  $bdd->exec("INSERT INTO TypeQuestion (libelle_type) VALUES ('Vrai/Faux')");
  $bdd->exec("INSERT INTO TypeQuestion (libelle_type) VALUES ('Nombre')");
 
- // Ajout d'une question liée à un quizz
- $bdd->exec("INSERT INTO Question (id_quizz, id_type,id_question, libelle_question) VALUES (1, 1,1, 'Le PHP est un langage de programmation')");
-
- // Ajout de réponses associées à la question
- $bdd->exec("INSERT INTO Reponse (id_question,id_quizz, id_reponse, libelle_reponse, est_correct) VALUES (1, 1,1, 'Vrai', 1)");
- $bdd->exec("INSERT INTO Reponse (id_question,id_quizz, id_reponse, libelle_reponse, est_correct) VALUES (1, 1,2, 'Faux', 0)");
-
  echo "Données insérées avec succès.";
-function getMaxIDquestion($id_quizz, $bdd){
+ return $bdd;
+    } catch (PDOException $e) {
+        die('Erreur : ' . $e->getMessage());
+    }
+}
+
+ function getMaxIDquestion($id_quizz, $bdd){
     $query = $bdd->query("SELECT MAX(id_question) AS max_id FROM Question WHERE id_quizz = " . $id_quizz);
     $result = $query->fetch(PDO::FETCH_ASSOC);
+
+    if($result['max_id'] == null){
+        return 1;
+    }
     
     return $result['max_id'] +1;
 }
 function getMaxIDReponse($id_quizz,$id_question, $bdd){
     $query = $bdd->query("SELECT MAX(id_reponse) AS max_id FROM Reponse WHERE id_quizz = " . $id_quizz ." and id_question = " . $id_question);
     $result = $query->fetch(PDO::FETCH_ASSOC);
+
+    if($result['max_id'] == null){
+        return 1;
+    }
     
     return $result['max_id'] +1;
 }
-echo getMaxIDReponse(1,1,$bdd);
-} catch (PDOException $e) {
-    die('Erreur : ' . $e->getMessage());
-}
+
 ?>
