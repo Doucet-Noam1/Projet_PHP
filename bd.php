@@ -1,10 +1,13 @@
 <?php
+
+function loadBD() {
 try {
     // Suppression de la base de données existante
     if (file_exists('ma_base_de_donnees.db')) {
         unlink('ma_base_de_donnees.db');
         echo "Base de données existante supprimée.<br>";
     }
+
 
     // Création de la base SQLite
     $bdd = new PDO('sqlite:ma_base_de_donnees.db');
@@ -36,6 +39,7 @@ $bdd->exec('CREATE TABLE IF NOT EXISTS Question (
 $bdd->exec('CREATE TABLE IF NOT EXISTS Reponse (
         id_question INTEGER,
         id_reponse INTEGER,
+        id_quizz INTEGER,
         libelle_reponse TEXT,
         est_correct BOOLEAN,
         PRIMARY KEY(id_question, id_reponse),
@@ -69,31 +73,31 @@ $bdd->exec('CREATE TABLE IF NOT EXISTS Reponse (
  $bdd->exec("INSERT INTO Reponse (id_question, id_reponse, libelle_reponse, est_correct) VALUES (4, 7, 'Christelle Fernier', 0)");
 
  echo "Données insérées avec succès.";
-// Récupération des données du Quizz
-$queryQuizz = $bdd->query("SELECT * FROM Quizz");
-$quizz = $queryQuizz->fetch(PDO::FETCH_ASSOC);
-echo "Quizz : " . $quizz['nom'] . "<br>";
-
-// Récupération des types de questions
-$queryTypes = $bdd->query("SELECT * FROM TypeQuestion");
-while ($type = $queryTypes->fetch(PDO::FETCH_ASSOC)) {
-    echo "Type de question : " . $type['libelle_type'] . "<br>";
-}
-
-// Récupération des questions et réponses liées au quizz
-$queryQuestions = $bdd->query("SELECT * FROM Question WHERE id_quizz = 1");
-while ($question = $queryQuestions->fetch(PDO::FETCH_ASSOC)) {
-    echo "Question : " . $question['libelle_question'] . "<br>";
-
-    // Récupération des réponses associées à la question
-    $queryReponses = $bdd->query("SELECT * FROM Reponse WHERE id_question = " . $question['id_question']);
-    while ($reponse = $queryReponses->fetch(PDO::FETCH_ASSOC)) {
-        echo "- Réponse : " . $reponse['libelle_reponse'] . " (Correcte : " . ($reponse['est_correct'] ? 'Oui' : 'Non') . ")<br>";
+ return $bdd;
+    } catch (PDOException $e) {
+        die('Erreur : ' . $e->getMessage());
     }
-    echo "<br>";
 }
 
-} catch (PDOException $e) {
-    die('Erreur : ' . $e->getMessage());
+ function getMaxIDquestion($id_quizz, $bdd){
+    $query = $bdd->query("SELECT MAX(id_question) AS max_id FROM Question WHERE id_quizz = " . $id_quizz);
+    $result = $query->fetch(PDO::FETCH_ASSOC);
+
+    if($result['max_id'] == null){
+        return 1;
+    }
+    
+    return $result['max_id'] +1;
 }
+function getMaxIDReponse($id_quizz,$id_question, $bdd){
+    $query = $bdd->query("SELECT MAX(id_reponse) AS max_id FROM Reponse WHERE id_quizz = " . $id_quizz ." and id_question = " . $id_question);
+    $result = $query->fetch(PDO::FETCH_ASSOC);
+
+    if($result['max_id'] == null){
+        return 1;
+    }
+    
+    return $result['max_id'] +1;
+}
+
 ?>
