@@ -1,5 +1,6 @@
 <?php
 // Connexion à la base de données SQLite
+require "bd.php";
 try {
     $bdd = new PDO('sqlite:ma_base_de_donnees.db');
     $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -13,11 +14,30 @@ if ($_POST) {
     $question = $_POST['question'];
     $reponses = $_POST['reponses'];
     $types = $_POST['types'];
+    $est_correct = $_POST['est_correct'];
+
 
     // Insérer la question dans la base de données
+    $idQuestion = getMaxIDQuestion(2, $bdd);
+    $stmt = $bdd->prepare("INSERT INTO Question (id_quizz,id_question, id_type, libelle_question) VALUES (2,".$idQuestion.", ?, ?)");
+    $stmt->execute([$types,$question]);
+
+    $idReponse = getMaxIDReponse(2, $idQuestion, $bdd);
+    foreach (explode(',', $reponses) as $reponse) {
+        $stmtR = $bdd->prepare("INSERT INTO Reponse (id_question, id_quizz, id_reponse, libelle_reponse, est_correct) VALUES (?, 2, ?, ?, 0)");
+        $stmtR->execute([$idQuestion, $idReponse, $reponse]);
+        $idReponse++;
+    }
+
+    $idReponse = getMaxIDReponse(2, $idQuestion, $bdd);
+    foreach (explode(',', $est_correct) as $est_correctR) {
+        $stmtR = $bdd->prepare("INSERT INTO Reponse (id_question, id_quizz, id_reponse, libelle_reponse, est_correct) VALUES (?, 2, ?, ?, 1)");
+        $stmtR->execute([$idQuestion, $idReponse, $est_correctR]);
+        $idReponse++;
+    }
+
+
     
-    $stmt = $bdd->prepare("INSERT INTO Question (id_quizz, id_type, libelle_question) VALUES (".getMaxIDQuestion($quiz, $bdd).", ?, ?)");
-    $stmt->execute([$types],[$question]);
 }
 
 // Vérifier si la table 'questions' existe
@@ -45,31 +65,56 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Formulaire d'ajout de question -->
     <form method="post" action="">
-        <label for="question">Question :</label>
-        <input type="text" name="question" required>
 
-        <label for="reponses">Réponses associées (séparées par des virgules) :</label>
-        <input type="text" name="reponses" required>
 
-        <label for="types">Réponses associées (séparées par des virgules) :</label>
-        <input type="select" name="types" required>
-
+        <ul>
+            <li>
+                <label for="question">Question :</label>
+                <input type="text" name="question" required>
+            </li>
+            <li>
+                <label for="reponses">Mauvaise réponses (séparées par des virgules) :</label>
+                <input type="text" name="reponses" required>
+            </li>
+            <li>
+                <label for="est_correct">Bonne réponses (séparées par des virgules) :</label>
+                <input type="text" name="est_correct" required>
+            </li>
+            <li>
+                <label for="types">Type de question :</label>
+                <select type="select" name="types" required>
+                    <option value="1">QCM</option>
+                    <option value="2">Texte</option>
+                    <option value="3">Chiffre</option>
+                    <option value="4">Autre</option>
+                </select>
+            </li>
+        </ul>
         <button type="submit">Ajouter la question</button>
     </form>
 
     <!-- Affichage des questions et réponses -->
     <h2>Liste des Questions</h2>
     <ul>
-        <?php foreach ($questions as $q) : ?>
-            <li>
-            <strong><?= htmlspecialchars($q['libelle_question']); ?></strong><br>
-                <?php $rep = $bdd->query('SELECT * FROM reponse where id_question =' . $q["id_question"])->fetchAll();?>
-                <p>Réponses :</p>
-                <?php foreach ($rep as $r) : ?>
-                    <?= htmlspecialchars($r['libelle_reponse']); ?>
-                <?php endforeach; ?>
-            </li>
-        <?php endforeach; ?>
+        <?php 
+        foreach ($questions as $q) : 
+            echo "<li>";
+                echo "<h2>". htmlspecialchars($q['libelle_question']). "</h2>" ;
+                $rep = $bdd->query('SELECT * FROM reponse WHERE id_question =' . $q["id_question"]);
+                echo "<ul>";
+                    foreach ($rep as $r) : 
+                        echo "<li>";
+                            if ($r['est_correct'] == 1) {
+                                echo "<p style='color:green'>".htmlspecialchars($r['libelle_reponse'])."</p>";
+                            } else {
+                                echo "<p style='color:red'>".htmlspecialchars($r['libelle_reponse'])."</p>";
+                            }
+                        echo "</li>";
+                    endforeach; 
+                echo "</ul>";
+            echo "</li>";
+        endforeach; 
+        ?>
     </ul>
 
 </body>
