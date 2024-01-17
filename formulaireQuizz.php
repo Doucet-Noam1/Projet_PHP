@@ -70,19 +70,19 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
                 <label for="question">Question :</label>
                 <input type="text" name="question" required>
             </li>
- 
-                <li>
-                <label for="reponses">Mauvaise réponses (séparées par des virgules) :</label>
-                <input type="text" name="reponses" required>
-                </li>
-
             <li>
                 <label for="est_correct">Bonne réponses (séparées par des virgules) :</label>
                 <input type="text" name="est_correct" required>
             </li>
             <li>
+                <div id="myDiv">
+                <label for="reponses">Mauvaise réponses (séparées par des virgules) :</label>
+                <input type="text" name="reponses" required>
+                </div>
+            </li>
+            <li>
                 <label for="types">Type de question :</label>
-                <select type="select" name="types" required onchange="toggleReponsesField()">
+                <select name="types" id="selectType">
                     <option value="1">QCM</option>
                     <option value="2">Texte</option>
                     <option value="3">Chiffre</option>
@@ -118,14 +118,23 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
 </body>
 </html>
 <script>
-    function toggleReponsesField() {
-        var selectedType = document.getElementById('types').value;
-        var reponsesField = document.getElementById('reponses');
+    function handleSelectChange() {
+            var selectElement = document.getElementById('selectType');
+            var divElement = document.getElementById('myDiv');
 
-        if (selectedType == 1) {
-            reponsesField.disabled = false;
-        } else {
-            reponsesField.disabled = true;
+            // Vérifier la valeur sélectionnée
+            if (selectElement.value === '1') {
+                // Si la valeur est QCM, afficher la div
+                divElement.style.display = 'block';
+            } else {
+                // Sinon, cacher la div
+                divElement.style.display = 'none';
+            }
         }
-    }
+
+        // Ajouter un écouteur d'événements pour le changement de valeur dans le select
+        document.getElementById('selectType').addEventListener('change', handleSelectChange);
+
+        // Appeler la fonction au chargement de la page pour définir l'état initial
+        handleSelectChange();
 </script>
