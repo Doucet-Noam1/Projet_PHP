@@ -5,12 +5,15 @@ $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 session_start();
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['nom_utilisateur'])) {
     header('Location: login.php'); 
     exit();
-    
+
 }
-$username = $_SESSION['username'];
+$nom_utilisateur = $_SESSION['nom_utilisateur'];
+echo 'Bonjour ' . $nom_utilisateur;
+=======
+$nom_utilisateur= $_SESSION['nom_utilisateur'];
 
 ?>
 
@@ -24,7 +27,7 @@ $username = $_SESSION['username'];
 </head>
 
 <?php
-echo '<p> Bonjour ' . $username ."</p>";
+echo '<p> Bonjour ' . $nom_utilisateur ."</p>";
 $queryQuizz = $bdd->query("SELECT * FROM Quizz");
 echo "<div>";
 $id = getMaxIDQuizz($bdd);
@@ -39,7 +42,8 @@ echo '<ul>';
 while ($quizz = $queryQuizz->fetch(PDO::FETCH_ASSOC)) {
     echo '<li>';
     echo '<form method="post" action="un_quizz.php">';
-    echo "<a href='un_quizz.php?id_quizz=" . $quizz['id_quizz'] . "&username=".$username."'>".$quizz['nom']."</a>";
+    echo "<a href='un_quizz.php?id_quizz=" . $quizz['id_quizz'] . "&nom_utilisateur=".$nom_utilisateur."' title='voir les commentaires'>".$quizz['nom']."</a>";
+
     echo '</form>';
     echo '</li>';
 }
@@ -51,7 +55,7 @@ while ($quizz = $queryQuizz->fetch(PDO::FETCH_ASSOC)) {
     echo '<input type="hidden" name="id_quizz" value="' . $id . '">';
     echo '<input type="text" name="quiz" required>';
     echo ' <button type="submit">Créer un quiz</button>';
-    echo "<a href='profil.php?id=".$username."'>Profil</a>";
+    echo "<a href='profil.php?id=".$nom_utilisateur."'>Profil</a>";
 
 ?>
 
