@@ -86,7 +86,6 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
                     <option value="1">QCM</option>
                     <option value="2">Texte</option>
                     <option value="3">Chiffre</option>
-                    <option value="4">Autre</option>
                 </select>
             </li>
         </ul>

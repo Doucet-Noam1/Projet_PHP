@@ -71,7 +71,7 @@ class RadioButtonInput extends Input{
 
     public function render(){
         echo "<label for=".$this->id.">".$this->label.":</label>";
-        echo "<input type='radio' name=".$this->name." value=".$this->label." id=".$this->id."> ";
+        echo "<input type='radio' name=".$this->name." value='".$this->label."' id=".$this->id."> ";
     }
 }
 

@@ -24,7 +24,7 @@ while ($question = $queryQuestions->fetch(PDO::FETCH_ASSOC)) {
 
     echo "<p>".$question['libelle_question']."</p>";
     echo "<p>Réponse : ".$bonneReponse['libelle_reponse']."</p>";
-    echo $reponse;
+    
 
     if ($bonneReponse['libelle_reponse'] == $reponse) {
         echo "<p>Vous gagnez 1 point !";
