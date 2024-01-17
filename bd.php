@@ -65,6 +65,7 @@ $bdd->exec('CREATE TABLE IF NOT EXISTS Reponse (
 
 
  $bdd->exec("INSERT INTO Utilisateur (nom_utilisateur, mot_de_passe) VALUES ('Noam', 'test')");
+ $bdd->exec("INSERT INTO Utilisateur (nom_utilisateur, mot_de_passe) VALUES ('titou', 'titou')");
 
  $bdd->exec("INSERT INTO Question (id_quizz, id_type,id_question, libelle_question) VALUES (1, 1,1, 'Le PHP est un langage de programmation')");
  $bdd->exec("INSERT INTO Question (id_quizz, id_type,id_question, libelle_question) VALUES (2, 3,2, 'Combien de soeurs a Meduse?')");
