@@ -1,0 +1,22 @@
+p{
+    font-size: 250%;
+}
+
+ul{
+    display: flex;
+    justify-content: space-around;
+    padding-left: 0%;
+    
+    flex-wrap: wrap;
+}
+h1{
+    text-align: center;
+    margin-top: 10%;
+}
+li{
+    width: fit-content;
+    margin: 5%;
+    margin-top: 0%;
+    list-style: none;
+    flex-basis: fit-content;
+}

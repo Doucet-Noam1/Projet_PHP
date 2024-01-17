@@ -12,6 +12,24 @@ if ($a_repondu != false){
     echo "vous avez deja repondu";
 }
 else{
+=======
+$query = $bdd->query("SELECT * FROM Quizz WHERE id_quizz =" . $id_quizz);
+$quizz = $query->fetch(PDO::FETCH_ASSOC);
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/un_quiz.css">
+    <title>Acceuil</title>
+</head>
+
+<?php
+echo "<h1>". $quizz['nom']."</h1>";
+
+$queryQuestions = $bdd->query("SELECT * FROM Question where id_quizz=" . $id_quizz);
 
     $query = $bdd->query("SELECT * FROM Quizz WHERE id_quizz =" . $id_quizz);
     $quizz = $query->fetch(PDO::FETCH_ASSOC);
@@ -38,11 +56,12 @@ else{
                 $radio->render();
             }
         }
-    }
+    }echo "<br>";
+
     $submit = new SubmitButtonInput("submit", "Valider");
     $submit->render();
     echo "</form>";
-}
-echo ' <a href="index.php"> accueil</a>';
+     echo ' <a href="index.php"> accueil</a>';
 
+}
 ?>
