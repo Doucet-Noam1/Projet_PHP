@@ -3,7 +3,7 @@ session_start();
 $bdd = new PDO('sqlite:ma_base_de_donnees.db');
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-function verifyLogin($username, $password, $bdd) {
+function verifie_utilisateur($username, $password, $bdd) {
     
 
     $query = $bdd->prepare("SELECT * FROM Utilisateur WHERE nom_utilisateur = ? AND mot_de_passe = ?");
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    if (verifyLogin($username, $password, $bdd)) {
+    if (verifie_utilisateur($username, $password, $bdd)) {
         $_SESSION['username'] = $username; 
         header('Location: index.php'); 
         exit();

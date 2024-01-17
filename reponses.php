@@ -35,7 +35,7 @@ while ($question = $queryQuestions->fetch(PDO::FETCH_ASSOC)) {
 }
 
 echo "<p>SCORE: ".$count."</p>";
-
-$bdd->exec("INSERT INTO A_Repondu (id_quizz, id_utilisateur, score) VALUES ($id_quizz, $username, $count)");
-
+echo  $username;
+$stmtR = $bdd->prepare("INSERT INTO A_Repondu (id_quizz, nom_utilisateur, score) VALUES (?,?,?)");
+$stmtR->execute([$id_quizz, $username, $count]);
 ?>

@@ -34,7 +34,8 @@ if ($_POST) {
 
     $idReponse = getMaxIDReponse($id_quizz, $idQuestion, $bdd);
     foreach (explode(',', $reponses) as $reponse) {
-         $bdd->exec("INSERT INTO Reponse (id_question, id_reponse,id_quizz,  libelle_reponse, est_correct) VALUES ($idQuestion,$idReponse, $id_quizz,$reponse, 0)");
+        $stmtR = $bdd->prepare("INSERT INTO Reponse (id_question, id_reponse,id_quizz,  libelle_reponse, est_correct) VALUES (?,?,?,?, 0)");
+        $stmtR->execute([$idQuestion,$idReponse, $id_quizz,$reponse]);
         $idReponse++;
     }
 
@@ -114,7 +115,7 @@ $questions = $requete->fetchAll(PDO::FETCH_ASSOC);
         endforeach; 
         ?>
     </ul>
-
+<a href="index.php"> accueil</a>
 </body>
 </html>
 <script>
