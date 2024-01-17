@@ -12,7 +12,6 @@ if ($a_repondu != false){
     echo "vous avez deja repondu";
 }
 else{
-=======
 $query = $bdd->query("SELECT * FROM Quizz WHERE id_quizz =" . $id_quizz);
 $quizz = $query->fetch(PDO::FETCH_ASSOC);
 
@@ -27,8 +26,6 @@ $quizz = $query->fetch(PDO::FETCH_ASSOC);
 </head>
 
 <?php
-echo "<h1>". $quizz['nom']."</h1>";
-
 $queryQuestions = $bdd->query("SELECT * FROM Question where id_quizz=" . $id_quizz);
 
     $query = $bdd->query("SELECT * FROM Quizz WHERE id_quizz =" . $id_quizz);

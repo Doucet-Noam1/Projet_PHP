@@ -11,8 +11,6 @@ if (!isset($_SESSION['nom_utilisateur'])) {
 
 }
 $nom_utilisateur = $_SESSION['nom_utilisateur'];
-echo 'Bonjour ' . $nom_utilisateur;
-=======
 $nom_utilisateur= $_SESSION['nom_utilisateur'];
 
 ?>
@@ -49,12 +47,6 @@ while ($quizz = $queryQuizz->fetch(PDO::FETCH_ASSOC)) {
 }
     echo '</ul>';
 
-    $id = getMaxIDQuizz($bdd);
-    echo '<form method="get" action="formulaireQuizz.php">';
-    echo '<label for="quiz">nom du quiz :</label>';
-    echo '<input type="hidden" name="id_quizz" value="' . $id . '">';
-    echo '<input type="text" name="quiz" required>';
-    echo ' <button type="submit">Créer un quiz</button>';
     echo "<a href='profil.php?id=".$nom_utilisateur."'>Profil</a>";
 
 ?>

@@ -23,7 +23,7 @@ while ($question = $queryQuestions->fetch(PDO::FETCH_ASSOC)) {
     while ($bonneReponse = $queryCorrecte->fetch(PDO::FETCH_ASSOC)){
         $reponse = $_POST[$question['id_question']];
 
-        echo "<p>".$question['libelle_question']."</p>";
+        echo "<p> <strong>".$question['libelle_question']." </strong></p>";
         echo "<p>Réponse : ".$bonneReponse['libelle_reponse']."</p>";
         if ($bonneReponse['libelle_reponse'] == $reponse) {
             $count += 1;
@@ -38,23 +38,13 @@ while ($question = $queryQuestions->fetch(PDO::FETCH_ASSOC)) {
     $bonneReponse = $queryCorrecte->fetch(PDO::FETCH_ASSOC);
     $reponse = $_POST[$question['id_question']];
 
-    echo "<p><strong>".$question['libelle_question']."</strong></p>";
-    echo "<p>Réponse : ".$bonneReponse['libelle_reponse']."</p>";
     
+    }}
 
-    if ($bonneReponse['libelle_reponse'] == $reponse) {
-        echo "<p class='true'>Vous gagnez 1 point !";
-        $count += 1;
-    } else {
-        echo "<p class='false'>Vous n'avez pas eu bon !";
-    }
-}
 
-echo "<p>SCORE: ".$count."</p>";
-echo  $nom_utilisateur;
 echo "<p><strong>SCORE: ".$count."</strong></p>";
+echo ' <a href="index.php"> accueil</a>';
 $stmtR = $bdd->prepare("INSERT INTO A_Repondu (id_quizz, nom_utilisateur, score) VALUES (?,?,?)");
 $stmtR->execute([$id_quizz, $nom_utilisateur, $count]);
-echo ' <a href="index.php"> accueil</a>';
 
 ?>
