@@ -27,11 +27,11 @@ $bdd->exec('CREATE TABLE IF NOT EXISTS TypeQuestion (
 
 $bdd ->exec('CREATE TABLE IF NOT EXISTS A_Repondu(
     id_quizz INTEGER,
-    id_utilisateur INTEGER,
+    nom_utilisateur TEXT,
     score INTEGER,
-    PRIMARY KEY(id_quizz, id_utilisateur),
+    PRIMARY KEY(id_quizz, nom_utilisateur),
     FOREIGN KEY(id_quizz) REFERENCES Quizz(id_quizz),
-    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur(id_utilisateur)
+    FOREIGN KEY(nom_utilisateur) REFERENCES Utilisateur(nom_utilisateur)
 )');
 
 $bdd->exec('CREATE TABLE IF NOT EXISTS Question (
@@ -50,7 +50,7 @@ $bdd->exec('CREATE TABLE IF NOT EXISTS Reponse (
         id_quizz INTEGER,
         libelle_reponse TEXT,
         est_correct BOOLEAN,
-        PRIMARY KEY(id_question, id_reponse),
+        PRIMARY KEY(id_quizz,id_question, id_reponse),
         FOREIGN KEY(id_question) REFERENCES Question(id_question)
         FOREIGN KEY(id_quizz) REFERENCES Quizz(id_quizz)
     )');
@@ -116,4 +116,5 @@ function getMaxIDQuizz($bdd){
     
     return $result['max_id'] +1;
 }
+
 ?>
