@@ -1,0 +1,7 @@
+.true::before{
+    content: "✅ ";
+}
+
+.false::before{
+    content: "❌ ";
+}

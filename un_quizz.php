@@ -9,6 +9,17 @@ $username = $_GET["username"];
 $query = $bdd->query("SELECT * FROM Quizz WHERE id_quizz =" . $id_quizz);
 $quizz = $query->fetch(PDO::FETCH_ASSOC);
 
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/un_quiz.css">
+    <title>Acceuil</title>
+</head>
+
+<?php
 echo "<h1>". $quizz['nom']."</h1>";
 
 $queryQuestions = $bdd->query("SELECT * FROM Question where id_quizz=" . $id_quizz);
@@ -32,6 +43,7 @@ while ($question = $queryQuestions->fetch(PDO::FETCH_ASSOC)) {
         }
     }
 }
+echo "<br>";
 $submit = new SubmitButtonInput("submit", "Valider");
 $submit->render();
 echo "</form>";

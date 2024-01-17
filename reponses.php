@@ -8,7 +8,7 @@ $username = $_GET['username'];
 
 $query = $bdd->query("SELECT * FROM Quizz WHERE id_quizz =".$id_quizz);
 $quizz = $query->fetch(PDO::FETCH_ASSOC);
-
+echo "<head><link rel='stylesheet' href='css/reponses.css'></head>";
 echo "<h1>". $quizz['nom']." - Correction</h1>";
 
 $queryQuestions = $bdd->query("SELECT * FROM Question where id_quizz=".$id_quizz);
@@ -22,20 +22,19 @@ while ($question = $queryQuestions->fetch(PDO::FETCH_ASSOC)) {
     $bonneReponse = $queryCorrecte->fetch(PDO::FETCH_ASSOC);
     $reponse = $_POST[$question['id_question']];
 
-    echo "<p>".$question['libelle_question']."</p>";
+    echo "<p><strong>".$question['libelle_question']."</strong></p>";
     echo "<p>Réponse : ".$bonneReponse['libelle_reponse']."</p>";
     
 
     if ($bonneReponse['libelle_reponse'] == $reponse) {
-        echo "<p>Vous gagnez 1 point !";
+        echo "<p class='true'>Vous gagnez 1 point !";
         $count += 1;
     } else {
-        echo "<p>Vous n'avez pas eu bon !";
+        echo "<p class='false'>Vous n'avez pas eu bon !";
     }
 }
 
-echo "<p>SCORE: ".$count."</p>";
-echo  $username;
+echo "<p><strong>SCORE: ".$count."</strong></p>";
 $stmtR = $bdd->prepare("INSERT INTO A_Repondu (id_quizz, nom_utilisateur, score) VALUES (?,?,?)");
 $stmtR->execute([$id_quizz, $username, $count]);
 ?>
