@@ -1,7 +1,10 @@
 <?php
 session_start(); 
+require "bd.php";
+loadBD();
 $bdd = new PDO('sqlite:ma_base_de_donnees.db');
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 
 function verifie_utilisateur($nom_utilisateur, $password, $bdd) {
     
